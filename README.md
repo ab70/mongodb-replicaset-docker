@@ -50,3 +50,9 @@ Add or modify 127.0.0.1 localhost , then add container name for example:
 127.0.0.1   localhost   mongo1
 ```
 Then save & exit. Now with the url it is accessable.
+
+## Automate Full Deployment
+#### This will work if if have initialized the whole process once (Initially it fails for delay issue which can vary from matchine to matchine).
+```
+sudo bash deploy.sh
+```

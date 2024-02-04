@@ -1,21 +1,23 @@
-# mongodb-replicaset
-# Last step if can't access through the compass then add this:
-# /etc/hosts: localhost mongo1(container name)
-
-# 1. Run setup.sh
+## mongodb-replicaset
+## 1. Run setup.sh
+```
 bash setup.sh
-
-# # 2. Start Docker containers
+```
+## 2. Start Docker containers
+```
 docker compose down
 docker compose up -d
-
-# # 3. Execute commands inside mongo1 container
+```
+## 3. Execute commands inside mongo1 container
+```
 docker exec -it mongo1 bash
-
-# # 4. Connect to MongoDB shell
+```
+## 4. Connect to MongoDB shell
+```
 mongosh -u root -p example
-
-# # 5. Initialize replica set
+```
+## 5. Initialize replica set
+```
 rs.initiate(
   {
     _id: "rs0",
@@ -26,7 +28,25 @@ rs.initiate(
       { _id: 2, host: "mongo3:27019" }
     ]
   }
-)
+) 
+```
 
-# # 6. Check replica set status
+## 6. Check replica set status
+```
 rs.status()
+```
+
+## Connect using compass
+## Url
+```
+mongodb://root:example@localhost:27017,localhost:27018,localhost:27019/?replicaSet=rs0&authSource=admin
+```
+If youu can't connect and it keeps loading then for Linux :
+```
+sudo nano /etc/hosts
+```
+Add or modify 127.0.0.1 localhost , then add container name for example:
+```
+127.0.0.1   localhost   mongo1
+```
+Then save & exit. Now with the url it is accessable.

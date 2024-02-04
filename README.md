@@ -56,3 +56,7 @@ Then save & exit. Now with the url it is accessable.
 ```
 sudo bash deploy.sh
 ```
+#### Or just run the dcker once its been initialized, no need to initiate whole process again, just run
+```
+sudo docker compose up -d
+```

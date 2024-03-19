@@ -16,6 +16,23 @@ docker exec -it mongo1 bash
 ```
 mongosh -u root -p example
 ```
+
+### 4.1 If authentication is not enabled by the docker compose then you have to initialize manulally
+### 4.1.1 Connect to shell without authentication
+```
+mongosh
+```
+### 4.1.2 Switch to admin db (it will also creat ethe db)
+```
+db.createUser({
+  user: "root",
+  pwd: "example",
+  roles: [{ role: "root", db: "admin" }]
+})
+
+```
+#### Now it will create root user (This step can also be done after rs.initiste, sometimes rs.initiate wont allow without authentication)
+
 ## 5. Initialize replica set
 ```
 rs.initiate(
@@ -59,4 +76,10 @@ sudo bash deploy.sh
 #### Or just run the dcker once its been initialized, no need to initiate whole process again, just run
 ```
 sudo docker compose up -d
+```
+
+#### To remove all volume at once
+```
+docker volume rm $(docker volume ls -q)
+
 ```

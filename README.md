@@ -83,3 +83,20 @@ sudo docker compose up -d
 docker volume rm $(docker volume ls -q)
 
 ```
+## Backup db (manual)
+
+#### To backup a db if a url is present: 
+```
+#It will backup the whole db in that current irectory(full cluster)
+mongodump --uri "mongodb+srv://username:password@cluster0.mongodb.net" --out .
+```
+
+#### To restore a db if url is present:
+```
+# This will restore with the url frombackup directtory(current):(this will merge data without deleting previous data)
+mongorestore --uri "mongodb+srv://username:password@cluster0.mongodb.net" .
+
+# This will restore with the url frombackup directtory(current):(this will replace or delete previous data and keep current only)
+mongorestore --uri "mongodb+srv://username:password@cluster0.mongodb.net" --drop .
+ 
+```

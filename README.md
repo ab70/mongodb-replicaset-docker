@@ -100,3 +100,17 @@ mongorestore --uri "mongodb+srv://username:password@cluster0.mongodb.net" .
 mongorestore --uri "mongodb+srv://username:password@cluster0.mongodb.net" --drop .
  
 ```
+### To restore a cluster from inside the docker of that db
+```
+#Copy the db to the dockers a directory /tmp
+docker cp /home/abrar/niamCluster mongo1:/tmp
+
+#Get into the db docker
+docker exec -it mongo1
+
+#Inside the docker go to that /tmp folder and the cluster directory
+cd /tmp/foldername
+
+#now from here sync DB using this
+mongorestore --username root --password example --authenticationDatabase admin .
+```

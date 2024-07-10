@@ -15,12 +15,19 @@ networks:
         - subnet: 172.10.5.0/24
 
 services:
-
+  #use this one but this image is old one
+  # mongo-keys:
+  #   image: depop/openssl-bats
+  #   volumes:
+  #     - mongo-keys:/mongo-conf
+  #   command: 'bash -c "openssl rand -base64 741 > /mongo-conf/mongodb-keyfile; chmod 600 /mongo-conf/mongodb-keyfile; chown 999 /mongo-conf/mongodb-keyfile"'
+  
+  #Use this one as it will use latest one with alpine image (this is for creating keyfile and mounting that in places also does keyfile rotation)
   mongo-keys:
-    image: depop/openssl-bats
+    image: alpine
     volumes:
       - mongo-keys:/mongo-conf
-    command: 'bash -c "openssl rand -base64 741 > /mongo-conf/mongodb-keyfile; chmod 600 /mongo-conf/mongodb-keyfile; chown 999 /mongo-conf/mongodb-keyfile"'
+    command: 'sh -c "apk add --no-cache openssl && openssl rand -base64 741 > /mongo-conf/mongodb-keyfile && chmod 600 /mongo-conf/mongodb-keyfile && chown 999 /mongo-conf/mongodb-keyfile"'
 
   # Primary
   mongo1:
@@ -39,7 +46,7 @@ services:
     networks:
       replica-set:
   
-  # Worker 1
+  # Secondary 1
   mongo2:
     container_name: mongo2
     image: mongo:latest
@@ -56,7 +63,7 @@ services:
     networks:
       replica-set:
   
-  # Worker 2
+  # Secondary 2
   mongo3:
     container_name: mongo3
     image: mongo:latest
@@ -73,4 +80,4 @@ services:
     networks:
       replica-set:
   
-  # Worker 3
+

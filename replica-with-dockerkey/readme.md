@@ -4,14 +4,17 @@ Mongo cluster, deploying a ReplicaSet
 
 ### To run the cluster:
 ```
-docker-compose up
+docker compose up -d
 ```
 
 ### Connect to the primary node
 ```
-docker-compose exec mongo1 mongo -u root -p password
+docker exec -it mongo1 bash
 ```
-
+### conect to mongo shell
+```
+mongosh -u root -p password
+```
 ### Instantiate the replica set
 ```
 rs.initiate({"_id" : "rs0","members" : [{"_id" : 0,"host" : "mongo1:27017"},{"_id" : 2,"host" : "mongo2:27017"},{"_id" : 3,"host" : "mongo3:27017"}]});
@@ -40,12 +43,12 @@ db.createCollection('my_collection');
 
 ### Verify credentials
 ```
-docker-compose exec mongo1 mongosh -u my_user -p password --authenticationDatabase my_data
+docker compose exec mongo1 mongosh -u my_user -p password --authenticationDatabase my_data
 ```
 
 ### Destory the cluster
 ```
-docker-compose down
+docker compose down
 ```
 
 ### go to /etc/hosts and do:

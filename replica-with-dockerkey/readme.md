@@ -1,4 +1,4 @@
-# Docker Tutorial 12
+# Docker Setup process
 
 Mongo cluster, deploying a ReplicaSet
 

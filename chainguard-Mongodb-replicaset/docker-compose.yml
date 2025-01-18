@@ -1,0 +1,77 @@
+version: "3.9"
+
+volumes:
+  mongo-keys:
+  mongo-data-1:
+  mongo-data-2:
+  mongo-data-3:
+
+networks:
+  replica-set:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.5.0/24
+
+services:
+  # Keyfile generator
+  mongo-keys:
+    image: debian:latest
+    volumes:
+      - mongo-keys:/opt/keyfile
+    command: 'bash -c "apt-get update && apt-get install -y openssl && openssl rand -base64 741 > /opt/keyfile/mongodb-keyfile && chmod 600 /opt/keyfile/mongodb-keyfile && chown 999:999 /opt/keyfile/mongodb-keyfile && ls -l /opt/keyfile"'
+    networks:
+      replica-set:
+    restart: "no"
+
+  # Primary MongoDB instance
+  mongo1:
+    container_name: mongo1
+    image: mongo:latest
+    volumes:
+      - mongo-keys:/opt/keyfile
+      - mongo-data-1:/data/db
+    env_file:
+      ./mongod.env
+    ports:
+      - 27017:27017
+    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
+    depends_on:
+        - mongo-keys
+    networks:
+      replica-set:
+  
+  # Secondary 1
+  mongo2:
+    container_name: mongo2
+    image: mongo:latest
+    volumes:
+      - mongo-keys:/opt/keyfile
+      - mongo-data-2:/data/db
+    env_file:
+      ./mongod.env
+    ports:
+      - 27018:27017
+    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
+    depends_on:
+        - mongo-keys
+    networks:
+      replica-set:
+  
+  # Secondary 2
+  mongo3:
+    container_name: mongo3
+    image: mongo:latest
+    volumes:
+      - mongo-keys:/opt/keyfile
+      - mongo-data-3:/data/db
+    env_file:
+      ./mongod.env
+    ports:
+      - 27019:27017
+    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
+    depends_on:
+        - mongo-keys
+    networks:
+      replica-set:

@@ -1,0 +1,45 @@
+services:
+  mongo1:
+    container_name: mongo1
+    image: docker.io/bitnami/mongodb:8.0
+    ports:
+      - "27017:27017"  # <-- Exposes MongoDB on Host
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongo1
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    volumes:
+      - 'mongodb_master_data:/bitnami/mongodb'
+
+  mongo2:
+    container_name: mongo2
+    image: docker.io/bitnami/mongodb:8.0
+    ports:
+      - "27018:27017"  # <-- Exposes Secondary MongoDB
+    depends_on:
+      - mongo1
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongo2
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo1
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+
+  mongo3:
+    container_name: mongo3
+    image: docker.io/bitnami/mongodb:8.0
+    ports:
+      - "27019:27017"  # <-- Exposes Arbiter
+    depends_on:
+      - mongo1
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongo3
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo1
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+
+volumes:
+  mongodb_master_data:
+    driver: local

@@ -4,6 +4,7 @@ services:
     image: docker.io/bitnami/mongodb:8.0
     ports:
       - "27017:27017"  # <-- Exposes MongoDB on Host
+    restart: always
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=mongo1
       - MONGODB_REPLICA_SET_MODE=primary
@@ -17,6 +18,7 @@ services:
     image: docker.io/bitnami/mongodb:8.0
     ports:
       - "27018:27017"  # <-- Exposes Secondary MongoDB
+    restart: always
     depends_on:
       - mongo1
     environment:
@@ -31,6 +33,7 @@ services:
     image: docker.io/bitnami/mongodb:8.0
     ports:
       - "27019:27017"  # <-- Exposes Arbiter
+    restart: always
     depends_on:
       - mongo1
     environment:

@@ -1,3 +1,13 @@
+## Install Docker on your machine
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# Verify installations
+docker --version
+docker compose version
+```
+
 ## mongodb-replicaset
 ## 1. Run setup.sh
 ```

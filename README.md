@@ -2,8 +2,9 @@
 ```
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
-
-# Verify installations
+```
+## Verify installations
+```
 docker --version
 docker compose version
 ```

@@ -1,77 +1,59 @@
-version: "3.9"
-
-volumes:
-  mongo-keys:
-  mongo-data-1:
-  mongo-data-2:
-  mongo-data-3:
-
-networks:
-  replica-set:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.10.5.0/24
+version: "3.8"
 
 services:
-  # Keyfile generator
-  mongo-keys:
-    image: debian:latest
-    volumes:
-      - mongo-keys:/opt/keyfile
-    command: 'bash -c "apt-get update && apt-get install -y openssl && openssl rand -base64 741 > /opt/keyfile/mongodb-keyfile && chmod 600 /opt/keyfile/mongodb-keyfile && chown 999:999 /opt/keyfile/mongodb-keyfile && ls -l /opt/keyfile"'
-    networks:
-      replica-set:
-    restart: "no"
-
-  # Primary MongoDB instance
   mongo1:
+    image: cgr.dev/chainguard/mongodb
     container_name: mongo1
-    image: mongo:latest
-    volumes:
-      - mongo-keys:/opt/keyfile
-      - mongo-data-1:/data/db
-    env_file:
-      ./mongod.env
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: "rs0"
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
     ports:
-      - 27017:27017
-    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
-    depends_on:
-        - mongo-keys
+      - "27017:27017"
     networks:
-      replica-set:
-  
-  # Secondary 1
+      - mongo-replica-set
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo1-data:/data/db
+
   mongo2:
+    image: cgr.dev/chainguard/mongodb
     container_name: mongo2
-    image: mongo:latest
-    volumes:
-      - mongo-keys:/opt/keyfile
-      - mongo-data-2:/data/db
-    env_file:
-      ./mongod.env
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: "rs0"
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
     ports:
-      - 27018:27017
-    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
-    depends_on:
-        - mongo-keys
+      - "27018:27017"
     networks:
-      replica-set:
-  
-  # Secondary 2
+      - mongo-replica-set
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo2-data:/data/db
+
   mongo3:
+    image: cgr.dev/chainguard/mongodb
     container_name: mongo3
-    image: mongo:latest
-    volumes:
-      - mongo-keys:/opt/keyfile
-      - mongo-data-3:/data/db
-    env_file:
-      ./mongod.env
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: "rs0"
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
     ports:
-      - 27019:27017
-    command: 'mongod --auth --keyFile /opt/keyfile/mongodb-keyfile --replSet rs0'
-    depends_on:
-        - mongo-keys
+      - "27019:27017"
     networks:
-      replica-set:
+      - mongo-replica-set
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo3-data:/data/db
+
+networks:
+  mongo-replica-set:
+    driver: bridge
+
+volumes:
+  mongo1-data:
+    driver: local
+  mongo2-data:
+    driver: local
+  mongo3-data:
+    driver: local
